@@ -1,14 +1,13 @@
 <template>
   <div class="container mx-auto p-2 bg-gray-100 min-h-screen">
-    <h1 class="text-2xl font-bold mb-4">Match Madness</h1>
-    <p class="mb-4">Match the English words with their Italian counterparts, Nozo!</p>
+    <h1 class="text-2xl font-bold mb-4" @click="readyToPlay = false">Match Madness</h1>
 
     <!-- group looping -->
-    <div v-if="groups.length > 0 && !readyToPlay" class="row gx-2 gy-2 mb-3">
+    <div v-if="groups.length > 0 && !readyToPlay" class="grid grid-cols-2 gap-4">
       <div
         v-for="(group, index) in computedGroups"
         :key="index"
-        class="col-6"
+        class="bg-gray-150"
       >
         <div 
           :style="{
@@ -44,7 +43,7 @@
     <!-- match madness -->
     <div v-if="readyToPlay">
       <hr>
-      <h2>No.{{ currentIndex }} / {{ shuffledList.length }}</h2>
+      <h2 class="text-center">No.{{ currentIndex }} / {{ beiggingNum}}</h2>
       <hr>
       <div class="grid grid-cols-2 gap-4" >
         <div>
@@ -84,7 +83,7 @@
     </div>
 
     <div class="mt-4">
-      <p class="text-green-500">{{ message }}</p>
+      <p class="text-red-500 text-center">{{ message }}</p>
     </div>
   </div>
 </template>
@@ -119,10 +118,12 @@ const englishBoard = ref(Array(5).fill({}))
 const italianBoard = ref(Array(5).fill({}))
 const selectedEnglish = ref({ index: null, word: null })
 const selectedItalian = ref({ index: null, word: null })
-const message = ref("")
+const message = ref("");
 const readyToPlay = ref(false);
 
 const currentIndex = ref(0);
+const currentGroupName = ref(null);
+const beiggingNum = ref(null);
 
 onMounted(() => {
   console.clear();
@@ -226,6 +227,8 @@ const computedGroups = computed(() => {
 
 const startMatchmadness = (group) =>{
   currentIndex.value = 0
+  currentGroupName.value = group.name
+  console.log(currentGroupName.value)
 
   console.log(group)
   const listWithIds = group.words.map((item, index) => ({
@@ -233,7 +236,14 @@ const startMatchmadness = (group) =>{
     ...item,
   }))
 
-  shuffledList.value = shuffle([...listWithIds, ...listWithIds])
+  let duplicatedList = [...listWithIds, ...listWithIds];
+
+  beiggingNum.value = duplicatedList.length
+  
+
+  // shuffledList.value = shuffle([...listWithIds, ...listWithIds])
+  shuffledList.value = shuffle(duplicatedList)
+  console.log(shuffledList.value.length)
   for (let i = 0; i < 5; i++) {
     randomRefill()
   }
@@ -294,7 +304,7 @@ function selectItalian(index) {
 function checkMatch() {
   if (selectedEnglish.value.word.id === selectedItalian.value.word.id) {
     currentIndex.value = currentIndex.value + 1
-    message.value = "Correct match, Nozo!"
+    message.value = ""
     englishBoard.value[selectedEnglish.value.index] = {}
     italianBoard.value[selectedItalian.value.index] = {}
     selectedEnglish.value = { index: null, word: null }
@@ -303,6 +313,13 @@ function checkMatch() {
     const emptyCount = englishBoard.value.filter((item) => Object.keys(item || {}).length === 0).length
     if (emptyCount >= 2) {
       randomRefill()
+    }
+
+    if(currentIndex.value == beiggingNum.value) {
+      readyToPlay.value = false;
+      incrementGroup({it: currentGroupName.value, en: 'groupName'})
+      fetchData();
+      // currentGroup.value.counter++
     }
   } else {
     message.value = "Try again, Nozo!"
@@ -313,6 +330,31 @@ function checkMatch() {
     }, 1000)
   }
 }
+
+const incrementGroup = (word) =>{
+      // word.counter++
+      // Build the API URL with the action parameter for increment
+      const url = `${baseUrl.value}?callback=jsonpCallback&action=increment&english=${encodeURIComponent(word.en)}&italian=${encodeURIComponent(word.it)}`;
+      console.log('-------- in crementing word');
+      console.log(url);
+      console.log('-------');
+
+      // Define the callback function globally
+      window.jsonpCallback = (data) => {
+        console.log("API Response (increment):", data);
+      };
+
+      // Dynamically add a <script> tag to call the JSONP API
+      const script = document.createElement("script");
+      script.src = url; // Set the API URL
+      script.async = true; // Load asynchronously
+      document.body.appendChild(script);
+
+      // Clean up the <script> tag after the request
+      script.onload = () => {
+        document.body.removeChild(script); // Remove the script tag
+      };
+    }
 </script>
 
 <style>
