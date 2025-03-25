@@ -19,7 +19,7 @@
           style="cursor: pointer;"
         >
           <div class="card-body">
-            <h5 class="card-title text-center">{{ group.name }}</h5>
+            <h5 class="card-title text-center  bg-gray-200">{{ group.name }}</h5>
             <hr>
             <section class="flex-container" style="width: 80%; margin: auto;">
               <small><i class="fa-solid fa-list"></i> <strong>{{ group.words.length }}</strong></small>
