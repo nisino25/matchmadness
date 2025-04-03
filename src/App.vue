@@ -19,9 +19,8 @@
           style="cursor: pointer;"
         >
           <div class="card-body">
-            <h5 class="card-title text-center  bg-gray-200">{{ group.name }}</h5>
-            <hr>
-            <section class="flex-container" style="width: 80%; margin: auto;">
+            <h5 class="card-title text-center  bg-gray-200 p-1">{{ group.name }}</h5>
+            <section class="flex-container p-2" style="width: 80%; margin: auto;">
               <small><i class="fa-solid fa-list"></i> <strong>{{ group.words.length }}</strong></small>
               <small v-if="group.name !== 'unchecked'  && group.name !== 'Marked Words'"><i class="fa-solid fa-bookmark"></i> <strong>{{ group.words.filter(word => word.marked)?.length }}</strong></small>
               <small v-if="group.name !== 'unchecked' && group.name !== 'Marked Words'"><i class="fa-regular fa-clock"></i> <strong>{{ group.counter }}</strong></small>
@@ -47,14 +46,14 @@
       <hr>
       <div class="grid grid-cols-2 gap-4" >
         <div>
-          <h2 class="text-xl font-semibold mb-2">English</h2>
+          <h2 class="text-xl font-semibold mb-2 text-center">English</h2>
           <ul>
             <li
               v-for="(word, index) in englishBoard"
               :key="'eng-' + index"
               @click="selectEnglish(index)"
               :class="[
-                'h-12 p-2 mb-2 bg-white cursor-pointer rounded',
+                'h-14 overflow-hidden p-2 mb-2 bg-white cursor-pointer rounded',
                 selectedEnglish.index === index ? 'border-2 border-blue-500' : ''
               ]"
             >
@@ -64,14 +63,14 @@
         </div>
 
         <div>
-          <h2 class="text-xl font-semibold mb-2">Italian</h2>
+          <h2 class="text-xl font-semibold mb-2 text-center">Italian</h2>
           <ul>
             <li
               v-for="(word, index) in italianBoard"
               :key="'ita-' + index"
               @click="selectItalian(index)"
               :class="[
-                'h-12 p-2 mb-2 bg-white cursor-pointer rounded',
+                'h-14 overflow-hidden p-2 mb-2 bg-white cursor-pointer rounded',
                 selectedItalian.index === index ? 'border-2 border-blue-500' : ''
               ]"
             >
@@ -322,10 +321,10 @@ function checkMatch() {
       // currentGroup.value.counter++
     }
   } else {
+    selectedEnglish.value = { index: null, word: null }
+    selectedItalian.value = { index: null, word: null }
     message.value = "Try again, Nozo!"
     setTimeout(() => {
-      selectedEnglish.value = { index: null, word: null }
-      selectedItalian.value = { index: null, word: null }
       message.value = ""
     }, 1000)
   }
@@ -406,10 +405,6 @@ const incrementGroup = (word) =>{
 
 .card-title{
   margin-bottom: unset !important;
-}
-
-.card-body{
-  padding: 10px !important;
 }
 
 .card-body hr{
