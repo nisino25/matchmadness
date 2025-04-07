@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto p-2 bg-gray-100 min-h-screen">
+  <div class="container p-2 bg-gray-100 min-h-screen">
     <h1 class="text-2xl font-bold mb-4" @click="readyToPlay = false">Match Madness</h1>
 
     <!-- group looping -->
@@ -317,7 +317,7 @@ function checkMatch() {
     if(currentIndex.value == beiggingNum.value) {
       readyToPlay.value = false;
       incrementGroup({it: currentGroupName.value, en: 'groupName'})
-      fetchData();
+      // fetchData();
       // currentGroup.value.counter++
     }
   } else {
@@ -331,29 +331,43 @@ function checkMatch() {
 }
 
 const incrementGroup = (word) =>{
-      // word.counter++
-      // Build the API URL with the action parameter for increment
-      const url = `${baseUrl.value}?callback=jsonpCallback&action=increment&english=${encodeURIComponent(word.en)}&italian=${encodeURIComponent(word.it)}`;
-      console.log('-------- in crementing word');
-      console.log(url);
-      console.log('-------');
+    // console.log(computedGroups.value)
+    // console.log(currentGroupName.value)
+    // console.log("-------")
 
-      // Define the callback function globally
-      window.jsonpCallback = (data) => {
-        console.log("API Response (increment):", data);
-      };
+    const target = groups.value.find(
+        (g) => g.name === currentGroupName.value
+    );
 
-      // Dynamically add a <script> tag to call the JSONP API
-      const script = document.createElement("script");
-      script.src = url; // Set the API URL
-      script.async = true; // Load asynchronously
-      document.body.appendChild(script);
-
-      // Clean up the <script> tag after the request
-      script.onload = () => {
-        document.body.removeChild(script); // Remove the script tag
-      };
+    if (target) {
+      console.log('foud it ');
+        target.counter += 1;
+    }else{
+      console.log('couldnt find the target');
     }
+
+    
+
+    // word.counter++
+    // Build the API URL with the action parameter for increment
+    const url = `${baseUrl.value}?callback=jsonpCallback&action=increment&english=${encodeURIComponent(word.en)}&italian=${encodeURIComponent(word.it)}`;
+
+    // Define the callback function globally
+    window.jsonpCallback = (data) => {
+      console.log("API Response (increment):", data);
+    };
+
+    // Dynamically add a <script> tag to call the JSONP API
+    const script = document.createElement("script");
+    script.src = url; // Set the API URL
+    script.async = true; // Load asynchronously
+    document.body.appendChild(script);
+
+    // Clean up the <script> tag after the request
+    script.onload = () => {
+      document.body.removeChild(script); // Remove the script tag
+    };
+}
 </script>
 
 <style>
