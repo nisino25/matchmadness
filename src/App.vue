@@ -230,11 +230,20 @@ const startMatchmadness = (group) =>{
   console.log(currentGroupName.value)
 
   console.log(group)
-  const listWithIds = group.words.map((item, index) => ({
-    id: index + 1,
-    ...item,
-  }))
 
+  // ask user
+  const mistakesOnly = window.confirm('Do you want to practice mistakes only?')
+
+  // choose words based on answer
+  const targetWords = mistakesOnly
+      ? group.words.filter(word => word.counter > 0)
+      : group.words
+
+  const listWithIds = targetWords.map((item, index) => ({
+      id: index + 1,
+      ...item,
+  }))
+  
   let duplicatedList = [...listWithIds, ...listWithIds];
 
   beiggingNum.value = duplicatedList.length
@@ -375,6 +384,10 @@ const incrementGroup = (word) =>{
   height: 100vh; /* Ensures the app takes the full viewport height */
   display: flex; /* Optional: For centering or flex layouts */
   flex-direction: column; /* Optional: Ensures children stack vertically */
+}
+
+* {
+    touch-action: manipulation;
 }
 
 .toggle-container{
